@@ -134,6 +134,7 @@ def op_26(f):
 		data += d
 		if d != b'\xff': continue
 		data += f.read(4)
+		raise
 	return f'OP26 {x:02X}, "{decode_string(data)}"'
 ops[0x26] = op_26
 
