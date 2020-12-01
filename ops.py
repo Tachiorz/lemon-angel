@@ -16,6 +16,8 @@ def op_13_jnz(f):
 	raise
 def op_15_jnz(f):
 	raise
+def op_17(f):
+	raise
 def op_1b(f):
 	raise
 def op_20(f):
@@ -53,6 +55,8 @@ def op_6b(f):
 def op_72(f):
 	raise
 def op_73(f):
+	raise
+def op_7a(f):
 	raise
 def op_82_jmp(f):
 	raise
@@ -98,7 +102,7 @@ ops = {
 0x14: 1,
 0x15: op_15_jnz,
 0x16: 2,
-0x17: 2,
+0x17: op_17,  # saving jump address
 0x18: 0,
 0x19: 2,
 0x1A: 0,
@@ -135,10 +139,10 @@ ops = {
 0x39: 0,
 0x3A: 6,
 0x3B: 0,
-0x3C: 1, # game reset?
+0x3C: 1,  # game reset?
 0x3D: op_3d,
 0x3E: 1,
-0x3F: op_3f, # save load?
+0x3F: op_3f,  # save load?
 0x40: 2,
 0x41: 0,
 0x42: 0,
@@ -190,14 +194,14 @@ ops = {
 0x70: 1,
 0x71: 1,
 0x72: op_72,
-0x73: op_73, #weird
+0x73: op_73,  #weird
 0x74: 2,
 0x75: 2,
 0x76: 1,
 0x77: 1,
-0x78: 0, #weird
+0x78: 0,  #weird
 0x79: 0x40,  #confirm
-0x7A: 2,
+0x7A: op_7a,  # saving jump address
 0x7B: 1,    #weird
 0x7C: 1,
 0x7D: 1,

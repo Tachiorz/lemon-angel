@@ -1,5 +1,6 @@
 import sys
 import struct
+import shlex
 from ops import ops
 
 labels = {}  # {"label": offset}
@@ -8,7 +9,10 @@ cla = b''
 
 
 def get_args(line):
-	return list(map(lambda l: l.strip(' '), line[line.find(' '):].split(',')))
+	splitter = shlex.shlex(line[line.find(' '):])
+	splitter.whitespace += ','
+	splitter.whitespace_split = True
+	return list(map(lambda l: l.strip(' '), splitter))
 
 
 def add_fix(label, offset):
@@ -17,8 +21,18 @@ def add_fix(label, offset):
 	fixes[label].append(offset)
 
 
+def ascii2full(s):
+	s = s.replace("'", "′")
+	full = dict((i, i - 0x20 + 0xFF00) for i in range(1, 0x7F))
+	full[0x20] = 0x3000
+	return s.translate(full)
+
+
 def convert_string(s):
 	s = s.strip('"')
+	s = ascii2full(s)
+	for c in s:
+		if len(c.encode('utf-8')) == 1: raise
 	data = s.encode('iso2022_jp_3')
 	if data == b'': return b'\x00'
 	data = data.replace(b'\x1b$B', b'')
@@ -80,6 +94,14 @@ def op_15_jnz(l):
 	add_fix(args[1], offset)
 	return bytes.fromhex(args[0]) + b'\x00\x00'
 ops[0x15] = op_15_jnz
+
+
+def op_17(l):
+	label = get_args(l)[0]
+	offset = len(cla)
+	add_fix(label, offset)
+	return b'\x00\x00'
+ops[0x17] = op_17
 
 
 def op_1b(l):
@@ -146,6 +168,14 @@ ops[0x63] = op_63
 def op_6b(l):
 	return bytes.fromhex(get_args(l)[0])
 ops[0x6b] = op_6b
+
+
+def op_7a(l):
+	label = get_args(l)[0]
+	offset = len(cla)
+	add_fix(label, offset)
+	return b'\x00\x00'
+ops[0x7a] = op_7a
 
 
 def op_85(l):

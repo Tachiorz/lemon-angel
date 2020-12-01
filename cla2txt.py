@@ -95,6 +95,14 @@ def op_15_jnz(f):
 ops[0x15] = op_15_jnz
 
 
+def op_17(f):
+	offset = struct.unpack('H', f.read(2))[0]
+	label = f"LAB_{offset:04X}"
+	labels[offset] = label
+	return f"OP17 {label}"
+ops[0x17] = op_17
+
+
 def op_1b(f):
 	return f'OP1B {ord(f.read(1)):02X}, "{read_string(f)}"'
 ops[0x1b] = op_1b
@@ -186,6 +194,14 @@ def op_6b(f):
 	# check it
 	return f"OP6B {data.hex()}"
 ops[0x6b] = op_6b
+
+
+def op_7a(f):
+	offset = struct.unpack('H', f.read(2))[0]
+	label = f"LAB_{offset:04X}"
+	labels[offset] = label
+	return f"OP7A {label}"
+ops[0x7a] = op_7a
 
 
 def op_85(f):
